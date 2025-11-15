@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import fetch from "node-fetch";
+import ytdl from "ytdl-core";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -11,33 +11,28 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Статикалық файлдарды беру
 app.use(express.static(__dirname));
 
-// / маршруты → index.html көрсету
+// / → index.html көрсету
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Видео жүктеу API
+// YouTube видео жүктеу
 app.post("/download", async (req, res) => {
   const { url } = req.body;
-  if (!url) return res.status(400).send("No URL provided");
+  if (!url || !ytdl.validateURL(url)) return res.status(400).send("Invalid YouTube URL");
 
   try {
-    // Мысал үшін TikTok видео URL
-    const response = await fetch(url);
-    if (!response.ok) return res.status(400).send("Video not found");
+    const info = await ytdl.getInfo(url);
+    const title = info.videoDetails.title.replace(/[^a-zA-Z0-9 ]/g, "");
+    res.setHeader("Content-Disposition", `attachment; filename="${title}.mp4"`);
+    res.setHeader("Content-Type", "video/mp4");
 
-    const contentType = response.headers.get("content-type") || "video/mp4";
-    res.setHeader("Content-Type", contentType);
-    res.setHeader("Content-Disposition", "attachment; filename=video.mp4");
-
-    response.body.pipe(res);
+    ytdl(url, { format: "mp4" }).pipe(res);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error while downloading video");
+    res.status(500).send("Error downloading YouTube video");
   }
 });
 

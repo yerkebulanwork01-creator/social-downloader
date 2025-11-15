@@ -7,7 +7,12 @@
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": ["social", "downloader", "video", "api"],
+  "keywords": [
+    "social",
+    "downloader",
+    "video",
+    "api"
+  ],
   "author": "Yer",
   "license": "ISC",
   "engines": {
@@ -16,6 +21,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "ytdl-core": "^4.11.5"
   }
 }
