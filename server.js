@@ -1,23 +1,30 @@
 import express from "express";
 import cors from "cors";
-import fetch from "node-fetch";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post("/download", async (req, res) => {
-  const { url } = req.body;
-  try {
-    const response = await fetch(url);
-    const buffer = await response.arrayBuffer();
+// Статикалық файлдарды беру
+app.use(express.static(__dirname));
 
-    res.setHeader("Content-Type", "video/mp4");
-    res.setHeader("Content-Disposition", "attachment; filename=video.mp4");
-    res.send(Buffer.from(buffer));
-  } catch (err) {
-    res.status(500).json({ error: "Download failed" });
-  }
+// Егер / ашылса index.html көрсету
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
 });
 
-app.listen(10000, () => console.log("Server running on port 10000"));
+// API endpoint (мысалы видео жүктеу)
+app.post("/download", (req, res) => {
+    const { url } = req.body;
+    if (!url) return res.status(400).send("No URL provided");
+    res.send("Video download endpoint works!");
+});
+
+// Серверді бастау
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
