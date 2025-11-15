@@ -1,15 +1,18 @@
 {
   "name": "social-downloader",
   "version": "1.0.0",
-  "description": "Social media downloader API",
+  "description": "Social media downloader API with frontend",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["social", "downloader", "video", "api"],
+  "author": "Yer",
   "license": "ISC",
-  "type": "module",
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
